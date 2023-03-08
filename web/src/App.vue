@@ -7,29 +7,13 @@
 import NavBar from "./components/NavBar.vue";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.min.js";
-import $ from "jquery";
+
 export default {
     components: {
         NavBar
     },
     setup()
     {
-        $.ajax({
-            url: "http://127.0.0.1:3000/user/account/token/",
-            type: "post",
-            data: {
-                username: "zyx1",
-                password: "pzyx1",
-            },
-            success(resp)
-            {
-                console.log(resp);
-            },
-            error(resp)
-            {
-                console.log(resp);
-            }
-        })
     }
 }
 
