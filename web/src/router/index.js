@@ -81,12 +81,28 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) =>{
-    if(to.meta.requestAuth && !store.state.user.is_login)
-    {
-        next({name: "user_account_login"});
+    let flag = 1;
+    const jwt_token = localStorage.getItem("jwt_token");
+
+    if (jwt_token) {
+        store.commit("updateToken", jwt_token);
+        store.dispatch("getinfo", {
+        success() {
+        },
+        error() {
+            router.push({ name: 'user_account_login' });
+        }
+        })
+    } else {
+        flag = 2;
     }
-    else
-    {
+    if (to.meta.requestAuth && !store.state.user.is_login) {
+        if (flag === 1) {
+            next();
+        } else {
+            next({name: "user_account_login"});
+        }
+        } else {
         next();
     }
 })
