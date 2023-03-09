@@ -4,19 +4,19 @@
             <div class="col-3">
                 <form @submit.prevent="register">
                     <div class="mb-3">
-                        <label for="username" class="form-label">用户名</label>
-                        <input v-model="username" type="text" class="form-control" id="username" placeholder="请输入用户名">
+                        <label for="username" class="form-label">Username</label>
+                        <input v-model="username" type="text" class="form-control" id="username" placeholder="Username, Max 100 characters">
                     </div>
                     <div class="mb-3">
-                        <label for="password" class="form-label">密码</label>
-                        <input v-model="password" type="password" class="form-control" id="password" placeholder="请输入密码">
+                        <label for="password" class="form-label">Password</label>
+                        <input v-model="password" type="password" class="form-control" id="password" placeholder="Password, Max 100 chacraters">
                     </div>
                     <div class="mb-3">
-                        <label for="confirmedPassword" class="form-label">确认密码</label>
-                        <input v-model="confirmedPassword" type="password" class="form-control" id="confirmedPassword" placeholder="请再次输入密码">
+                        <label for="confirmedPassword" class="form-label">Confirm Password</label>
+                        <input v-model="confirmedPassword" type="password" class="form-control" id="confirmedPassword" placeholder="Confirm password">
                     </div>
                     <div class="error-message">{{ error_message }}</div>
-                    <button type="submit" class="btn btn-primary">提交</button>
+                    <button type="submit" class="btn btn-primary">Register</button>
                 </form>
             </div>
         </div>
@@ -41,7 +41,7 @@ export default {
 
         const register = () => {
             $.ajax({
-                url: "https://app2703.acapp.acwing.com.cn/api/user/account/register/",
+                url: "http://127.0.0.1:3000/user/account/register/",
                 type: "post",
                 data: {
                     username: username.value,
