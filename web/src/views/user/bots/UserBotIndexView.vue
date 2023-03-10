@@ -36,7 +36,11 @@
                                     </div>
                                     <div class="mb-3">
                                         <label for="add-bot-code" class="form-label">Code Content</label>
-                                        <textarea v-model="botadd.content" class="form-control" id="add-bot-content" rows="7" placeholder="Your code..."></textarea>
+                                        <VAceEditor
+                                            v-model:value="botadd.content"
+                                            lang="c_cpp"
+                                            theme="textmate"
+                                            style="height: 300px" />
                                     </div>
                                 </div>
                                 <div class="modal-footer">
@@ -87,7 +91,11 @@
                                                     </div>
                                                     <div class="mb-3">
                                                         <label for="add-bot-code" class="form-label">Code Content</label>
-                                                        <textarea v-model="bot.content" class="form-control" id="add-bot-content" rows="7" placeholder="Your code..."></textarea>
+                                                        <VAceEditor
+                                                            v-model:value="bot.content"
+                                                            lang="c_cpp"
+                                                            theme="textmate"
+                                                            style="height: 300px" />
                                                     </div>
                                                 </div>
                                                 <div class="modal-footer">
@@ -109,19 +117,29 @@
     </div>
 </template>
 
-<script>
+<script type="application/json">
 import { ref, reactive } from 'vue';
 import $ from 'jquery';
 import { useStore } from 'vuex';
 import { Modal } from "bootstrap/dist/js/bootstrap.min.js";
+import { VAceEditor } from "vue3-ace-editor";
+import ace from "ace-builds";
+
+import 'ace-builds/src-noconflict/mode-json';
+import 'ace-builds/src-noconflict/theme-chrome';
+import 'ace-builds/src-noconflict/ext-language_tools';
+import 'ace-builds/src-noconflict/mode-c_cpp'
+
 
 
 export default {
     components:{
-        
+        VAceEditor
     },
     setup(){
-
+        ace.config.set(
+            "basePath", 
+            "https://cdn.jsdelivr.net/npm/ace-builds@" + require('ace-builds').version + "/src-noconflict/")
         const store = useStore();
         let bots = ref([]);
         const botadd =reactive({
