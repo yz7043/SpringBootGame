@@ -130,8 +130,6 @@ import 'ace-builds/src-noconflict/theme-chrome';
 import 'ace-builds/src-noconflict/ext-language_tools';
 import 'ace-builds/src-noconflict/mode-c_cpp'
 
-
-
 export default {
     components:{
         VAceEditor
