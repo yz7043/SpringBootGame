@@ -1,14 +1,16 @@
 import { GameObject } from "./GameObject";
 import { Wall } from "@/assets/scripts/Wall";
 import { Snake, SNAKE_STATUS } from "./Snake";
+
 export class GameMap extends GameObject{
-    constructor(ctx, parent){
+    constructor(ctx, parent, store){
         super();
         this.ctx = ctx;
         this.parent = parent;
         this.L = 0;
         this.rows = 13;
         this.cols = 14;
+        this.store = store;
 
         this.walls = []
         this.inner_walls_count = 20;
@@ -20,8 +22,7 @@ export class GameMap extends GameObject{
     }
     
     start(){
-        for(let i = 0; i < 1000; i++)
-            if(this.create_walls()) break;
+        this.create_walls();
         this.add_listening_events();
     }
 
@@ -68,53 +69,8 @@ export class GameMap extends GameObject{
         }
     }
 
-    check_connectivity(g){
-        let num_block = 0;
-        const st = JSON.parse(JSON.stringify(g));
-        for(let r = 0; r < this.rows; r++){
-            for(let c = 0; c < this.cols; c++){
-                if(!st[r][c]){
-                    num_block++;
-                    this.dfs(r, c, st);
-                }
-            }
-        }
-        return num_block === 1;
-    }
-
-
     create_walls(){
-        const g = []
-        for(let r = 0; r < this.rows; r++){
-            g[r] = [];
-            for(let c = 0; c < this.rows; c++){
-                g[r][c] = false;
-            }
-        }    
-        // add walls to boundaries
-        for(let r = 0; r < this.rows; r++){
-            g[r][0] = g[r][this.cols-1] = true;
-        }
-        for(let c = 0; c < this.cols; c++){
-            g[0][c] = g[this.rows-1][c] = true;
-        }
-        // create random walls
-        for(let i = 0; i < this.inner_walls_count / 2; i++){
-            // avoid duplicated wall and infinite loop
-            for(let j = 0; j < 1000; j++){
-                let r = parseInt(Math.random() * this.rows);
-                let c = parseInt(Math.random() * this.cols);
-                if(g[r][c] || g[this.rows-1-r][this.cols-1-c]) continue;
-                // avoid occupying rebirth point
-                if(r == this.rows-2 && c == 1 || c == this.cols-2 && r == 1) continue;
-                g[r][c] = true;
-                g[this.rows-1-r][this.cols-1-c] = true;
-                break;
-            }
-        }
-
-        if(!this.check_connectivity(g)) return false;
-
+        const g = this.store.state.battle.game_map;
         for(let r = 0; r < this.rows; r++){
             for(let c = 0; c < this.cols; c++){
                 if(g[r][c]){
@@ -144,24 +100,22 @@ export class GameMap extends GameObject{
     add_listening_events(){
         // let outer = this;
         this.ctx.canvas.focus();
-        const [snake0, snake1] = this.snakes;
         this.ctx.canvas.addEventListener("keydown", e => {
+            let d = -1;
             if(e.key === "w"){
-                snake0.set_direction(0);
+                d = 0;
             }else if(e.key === "d"){
-                snake0.set_direction(1); 
+                d = 1; 
             }else if(e.key === "s"){
-                snake0.set_direction(2);
+                d = 2;
             }else if(e.key === "a"){
-                snake0.set_direction(3);
-            }else if(e.key === "ArrowUp"){
-                snake1.set_direction(0);
-            }else if(e.key === "ArrowRight"){
-                snake1.set_direction(1); 
-            }else if(e.key === "ArrowDown"){
-                snake1.set_direction(2);
-            }else if(e.key === "ArrowLeft"){
-                snake1.set_direction(3);
+                d = 3;
+            }
+            if(d >= 0){
+                this.store.state.battle.socket.send(JSON.stringify({
+                    event: "move",
+                    direction: d,
+                }))
             }
         });
     }
